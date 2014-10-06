@@ -22,6 +22,7 @@ import android.widget.AdapterView;
  * and use a {@link com.google.android.glass.touchpad.GestureDetector}.
  * @see <a href="https://developers.google.com/glass/develop/gdk/touch">GDK Developer Guide</a>
  */
+
 public class MainActivity extends Activity {
 
     /** {@link CardScrollView} to use as the main content view. */
@@ -32,6 +33,9 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle bundle) {
+
+        getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
+
         super.onCreate(bundle);
 
         mView = buildView();
@@ -74,6 +78,14 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public boolean onCreatePanelMenu(int featureId, Menu menu){
+        if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS || featureId ==  Window.FEATURE_OPTIONS_PANEL) {
+            getMenuInflater().inflate(R.menu.main, menu);
+            return true;
+        }
+        return super.onCreatePanelMenu(featureId, menu);
+    }
+    @Override
     protected void onResume() {
         super.onResume();
         mCardScroller.activate();
@@ -93,6 +105,26 @@ public class MainActivity extends Activity {
 
         card.setText(R.string.hello_world);
         return card.getView();
+    }
+    public void memFriendMethod(String platform){
+    }
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS || featureId ==  Window.FEATURE_OPTIONS_PANEL) {
+            switch (item.getItemId()) {
+                case R.id.view_clients:
+                    memFriendMethod("Clients");
+                    break;
+                case R.id.new_recording:
+                    findDevelopers("Recording");
+                    break;
+                case R.id.view_summary:
+                    findDevelopers("Summaries");
+                    break;
+            }
+            return true;
+        }
+        return super.onMenuItemSelected(featureId, item);
     }
 
 }
